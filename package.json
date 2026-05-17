@@ -1,0 +1,19 @@
+{
+  "name": "threatscan",
+  "version": "2.0.0",
+  "description": "URL Threat Scanner — deep security analysis with DNS, SSL, redirect chains & VirusTotal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Arsh Abbasi (https://github.com/arsh0198)",
+  "license": "MIT"
+}

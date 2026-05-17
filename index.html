@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ThreatScan — URL Security Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Animated background grid -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="page">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">ThreatScan</span>
+        <span class="logo-badge">v2.0</span>
+      </div>
+      <nav class="nav-links">
+        <a href="https://github.com/arsh0198/threat-scanner" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/arsh0198" target="_blank" rel="noopener">@arsh0198</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-tag">[ SECURITY ANALYSIS TOOL ]</div>
+      <h1 class="hero-title">Analyze URLs.<br /><span class="accent">Expose Threats.</span></h1>
+      <p class="hero-sub">Deep inspection across DNS, SSL, redirect chains, heuristics, and threat intelligence.</p>
+    </section>
+
+    <!-- Scanner Input -->
+    <div class="scanner-box">
+      <div class="scanner-label">TARGET URL</div>
+      <div class="input-wrap">
+        <span class="input-prefix">›</span>
+        <input type="text" id="urlInput" placeholder="https://example.com" autocomplete="off" spellcheck="false" />
+        <button id="scanBtn" onclick="startScan()">
+          <span id="btnText">SCAN</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </div>
+      <div class="input-hints">
+        <span onclick="loadExample('http://paypal-secure-login.tk/account/verify')">Try: phishing example</span>
+        <span onclick="loadExample('https://github.com')">Try: safe URL</span>
+        <span onclick="loadExample('http://192.168.1.1/admin')">Try: IP host</span>
+      </div>
+    </div>
+
+    <!-- Terminal log -->
+    <div id="terminalWrap" class="terminal-wrap" style="display:none">
+      <div class="terminal-header">
+        <span class="t-dot red"></span><span class="t-dot yellow"></span><span class="t-dot green"></span>
+        <span class="t-title">scan_engine.log</span>
+      </div>
+      <div id="terminalLog" class="terminal-log"></div>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="results" style="display:none">
+
+      <!-- Verdict banner -->
+      <div id="verdictBanner" class="verdict-banner">
+        <div class="verdict-left">
+          <div id="verdictIcon" class="verdict-icon"></div>
+          <div>
+            <div id="verdictLabel" class="verdict-label"></div>
+            <div id="verdictUrl" class="verdict-url"></div>
+          </div>
+        </div>
+        <div class="verdict-right">
+          <div id="riskScore" class="risk-score"></div>
+          <div class="risk-label">RISK SCORE</div>
+        </div>
+      </div>
+
+      <!-- Score bar -->
+      <div class="score-section">
+        <div class="score-bar-track">
+          <div id="scoreBar" class="score-bar-fill"></div>
+          <div class="score-markers">
+            <span style="left:0%">0</span>
+            <span style="left:25%">25</span>
+            <span style="left:60%">60</span>
+            <span style="left:99%">100</span>
+          </div>
+        </div>
+        <div class="score-zones">
+          <span class="zone safe">SAFE</span>
+          <span class="zone warn">SUSPICIOUS</span>
+          <span class="zone danger">DANGEROUS</span>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div id="statsRow" class="stats-row"></div>
+
+      <!-- Checks grid -->
+      <div class="section-title">SECURITY CHECKS</div>
+      <div id="checksGrid" class="checks-grid"></div>
+
+      <!-- Details panels -->
+      <div class="panels-row">
+        <div id="dnsPanel" class="detail-panel">
+          <div class="panel-title">DNS INFO</div>
+          <div id="dnsContent" class="panel-content"></div>
+        </div>
+        <div id="sslPanel" class="detail-panel">
+          <div class="panel-title">SSL / TLS</div>
+          <div id="sslContent" class="panel-content"></div>
+        </div>
+        <div id="redirectPanel" class="detail-panel">
+          <div class="panel-title">REDIRECT CHAIN</div>
+          <div id="redirectContent" class="panel-content"></div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div id="recsSection" class="recs-section">
+        <div class="section-title">RECOMMENDATIONS</div>
+        <div id="recsList" class="recs-list"></div>
+      </div>
+
+    </div>
+
+    <!-- History -->
+    <div id="historySection" class="history-section" style="display:none">
+      <div class="section-title">SCAN HISTORY</div>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-left">
+        <span class="footer-logo">⬡ ThreatScan</span>
+        <span class="footer-sep">—</span>
+        <span>Made by <strong>Arsh Abbasi</strong></span>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/arsh0198" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          arsh0198
+        </a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
